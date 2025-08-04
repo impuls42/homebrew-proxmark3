@@ -20,7 +20,7 @@ class Proxmark3 < Formula
   depends_on "python@3.13" => :build
   depends_on "gd" => :recommended
   depends_on "openssl" => :recommended
-  depends_on "impulse42/proxmark3/arm-none-eabi-gcc" => :build
+  depends_on "impuls42/proxmark3/arm-none-eabi-gcc" => :build
 
   option "with-blueshark", "Enable Blueshark (BT Addon) support"
   option 'with-generic', 'Build for generic devices instead of RDV4'
