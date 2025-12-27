@@ -17,12 +17,14 @@ class Proxmark3 < Formula
   depends_on "pkg-config" => :build
   depends_on "openssl@3" => :build
   depends_on "qt@5" => :recommended
-  depends_on "python@3.13" => :build
+  depends_on "python@3.14" => :build
   depends_on "gd" => :recommended
   depends_on "openssl" => :recommended
   depends_on "impuls42/proxmark3/arm-none-eabi-gcc" => :build
 
   option "with-blueshark", "Enable Blueshark (BT Addon) support"
+  option "with-smartcard", "Enable Smartcard support"
+  option "with-flash", "Enable Flash support"
   option 'with-generic', 'Build for generic devices instead of RDV4'
   option 'with-small', 'Build for 256kB devices'
   option 'with-fast-build', 'Enable parallel compilation for faster builds'
@@ -32,7 +34,7 @@ class Proxmark3 < Formula
     'lf' => %w[em4100emul em4100rswb em4100rsww em4100rwc hidbrute hidfcbrute icehid multihid nedap_sim nexid proxbrute prox2brute samyrun tharexde],
     'hf' => %w[14asniff 14bsniff 15sniff aveful bog cardhopper colin craftbyte iceclass legic legicsim mattyrun mfcsim msdsal reblay st25_tearoffF tcprst tmudford unisniff young]
   }
-  
+
   FUNCTIONS.each do |func|
     option "without-#{func}", "Build without #{func.upcase} functionality"
   end
@@ -53,7 +55,14 @@ class Proxmark3 < Formula
       PLATFORM=#{build.with?('generic') ? 'PM3GENERIC' : 'PM3RDV4'}
     ]
 
-    args << 'PLATFORM_EXTRAS=BTADDON' if build.with? 'blueshark'
+    # Build PLATFORM_EXTRAS based on selected options
+    platform_extras = []
+    platform_extras << 'BTADDON' if build.with? 'blueshark'
+    platform_extras << 'SMARTCARD' if build.with? 'smartcard'
+    platform_extras << 'FLASH' if build.with? 'flash'
+
+    args << "PLATFORM_EXTRAS=#{platform_extras.join(' ')}" unless platform_extras.empty?
+
     args << '
       PLATFORM_SIZE=256
       STANDALONE= 
